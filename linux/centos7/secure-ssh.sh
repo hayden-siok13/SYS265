@@ -4,24 +4,40 @@
 #adds a public key from the local repo or curled from the remote repo
 #removes roots ability to ssh in
 
-# Create user sys265 user with specified home directory and shell
-sudo useradd -m -d /home/sys265 -s /bin/bash sys265
+#Check if a usernmae is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <username>"
+    exit 1
+fi
 
-#Create .ssh directory
-sudo mkdir /home/sysy265/.ssh
+USERNAME=$1
+HOME_DIR="/home/$USERNAME"
+SSH_DIR="$HOME_DIR/.ssh"
+AUTHORIZED_KEYS="$SSH_DIR/authroized_keys"
+PUBLIC_KEY_PATH="SYS265/linux/public-keys/ir_rsa.pub"
 
-#Copy the public key to authorized_keys
-sudo cp SYS265/linux/public-keys/id_rsa.pub /home/sys265/.ssh/authorized_keys
+# Create user with specified home directory and shell
+sudo useradd -m -d "$HOME_DIR" -s /bin/bash "$USERNAME"
+
+# Create .ssh directory
+sudo mkdir -p "$SSH_DIR"
+
+# Copy the public key to authorized_keys if it exists
+if [ -f "PUBLIC_KEY_PATH" ]; then
+    sudo cp "$PUBLIC_KEY_PATH" "$AUTHORIZED_KEYS"
+else 
+    echo "Public key file not found at $PUBLIC_KEY_PATH"
+    exit 1
+fi
 
 # Set appropriate permissions
-sudo chmod 700 /home/sys265/.ssh
-sudo chmod 600 /home/sys265/.ssh/authorized_keys
+sudo chmod 600 "$AUTHORIZED_KEYS"
+sudo chmod 700 "$SSH_DIR"
 
-# Change ownership to sys265
-sudo chown -R sys265:sys265 /home/sys265/.ssh
+# Change ownership to the new user
+sudo chown -R "$USERNAME:$USERNAME" "$SSH_DIR"
 
-# Disable root SSH access
-sudo sed -i 's/^PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
-sudo systemctl restart sshd
-
-echo "User sys265 created and secured SSH access configured."
+# Code for if root SSH needs to be disabled. If it needs to be disabled uncomment the code below:
+# sudo sed -i 's/^PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config'
+# sudo systemctl restart sshd
+echo "User $USERNAME created and secured SSH access configured."
