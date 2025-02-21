@@ -24,6 +24,7 @@ sudo mkdir -p "$SSH_DIR"
 
 # Copy the public key to authorized_keys if it exists
 if [ -f "PUBLIC_KEY_PATH" ]; then
+    sudo touch "$AUTHORIZED_KEYS"
     sudo cp "$PUBLIC_KEY_PATH" "$AUTHORIZED_KEYS"
 else 
     echo "Public key file not found at $PUBLIC_KEY_PATH"
