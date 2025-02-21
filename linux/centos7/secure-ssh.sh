@@ -14,7 +14,7 @@ USERNAME=$1
 HOME_DIR="/home/$USERNAME"
 SSH_DIR="$HOME_DIR/.ssh"
 AUTHORIZED_KEYS="$SSH_DIR/authroized_keys"
-PUBLIC_KEY_PATH="/home/hayden-loc/SYS265/linux/public-keys/id_rsa.pub"
+PUBLIC_KEY_PATH="/home/hayden-loc/.ssh/id_rsa.pub"
 
 # Create user with specified home directory and shell
 sudo useradd -m -d "$HOME_DIR" -s /bin/bash "$USERNAME"
